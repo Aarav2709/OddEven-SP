@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='OddEven-SP',
-    version='1.0.1',
+    version='1.0.2',
     packages=['OddEvenSP'],
     url='https://github.com/Aarav2709/OddEven-SP',
     license='Apache License v2',
