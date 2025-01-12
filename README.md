@@ -7,4 +7,4 @@ odd_even_game()
 ```
 Enjoy! Make sure to give FeedBack!
 
-[![Harlok's WakaTime stats](https://github-readme-stats.vercel.app/api/wakatime?username=Aarav2709)](https://github.com/anuraghazra/github-readme-stats)
+[![PyPI Downloads](https://static.pepy.tech/badge/oddeven-sp)](https://pepy.tech/projects/oddeven-sp)
