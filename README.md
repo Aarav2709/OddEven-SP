@@ -6,4 +6,5 @@ from OddEvenSP import odd_even_game
 odd_even_game()
 ```
 Enjoy! Make sure to give FeedBack!
+
 [![PyPI Downloads](https://static.pepy.tech/badge/oddeven-sp)](https://pepy.tech/projects/oddeven-sp)
