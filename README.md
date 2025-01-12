@@ -7,4 +7,4 @@ odd_even_game()
 ```
 Enjoy! Make sure to give FeedBack!
 
-[![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=aarav2709)](https://github.com/anuraghazra/github-readme-stats)
+[![Harlok's WakaTime stats](https://github-readme-stats.vercel.app/api/wakatime?username=Aarav2709)](https://github.com/anuraghazra/github-readme-stats)
