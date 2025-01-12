@@ -7,4 +7,4 @@ odd_even_game()
 ```
 Enjoy! Make sure to give FeedBack!
 
-[![PyPI Downloads](https://static.pepy.tech/badge/oddeven-sp)](https://pepy.tech/projects/oddeven-sp)
+[![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=aarav2709)](https://github.com/anuraghazra/github-readme-stats)
