@@ -1,5 +1,3 @@
-#No Bugs Yet!
-
 import json
 import random
 import sys
@@ -78,30 +76,48 @@ def toss():
         print(colored("\nYou lost the toss! Opponent will bowl first. 🏏", 'red'))
         return 'bowl'
 
-def get_computer_input(difficulty, player_input=None, user_score=None, computer_score=None):
+def player_turn():
+    # This function will get the player's input
+    while True:
+        try:
+            player_input = int(input("Enter a number between 1 and 10: "))
+            if 1 <= player_input <= 10:
+                return player_input
+            else:
+                print("Please enter a number between 1 and 10.")
+        except ValueError:
+            print("Invalid input! Please enter an integer between 1 and 10.")
+
+def get_computer_input(difficulty, player_input=None, user_score=None, computer_score=None, player_history=None):
+    """
+    Generate computer's input based on the selected difficulty level.
+    """
     if difficulty == 'easy':
         return random.randint(1, 10)
+
     elif difficulty == 'medium':
+        # Avoids picking the same number as the player
         computer_input = random.randint(1, 10)
         while computer_input == player_input:
             computer_input = random.randint(1, 10)
         return computer_input
-    elif difficulty == 'hard':
-        if computer_score < user_score:
-            return random.randint(6, 10)
-        else:
-            return random.randint(1, 5)
 
-def player_turn():
-    while True:
-        try:
-            number = int(input(colored("Choose a number (1-10): 🔢", 'yellow')))
-            if 1 <= number <= 10:
-                return number
-            else:
-                print(colored("Invalid input! Please choose a number between 1 and 10. 🚫", 'red'))
-        except ValueError:
-            print(colored("Invalid input! Please enter a number. 🔴", 'red'))
+    elif difficulty == 'hard':
+        if not player_history:
+            player_history = []
+
+        if len(player_history) >= 3:
+            predicted_input = max(set(player_history[-3:]), key=player_history[-3:].count)
+        else:
+            predicted_input = random.randint(1, 10)
+
+        if computer_score < user_score:
+            return random.choice([predicted_input, predicted_input + 1]) % 10 or 10
+        else:
+            return random.choice([predicted_input - 1, predicted_input]) % 10 or 10
+
+    # Default fallback if something goes wrong
+    return random.randint(1, 10)
 
 def check_achievements(user_score, difficulty, won_without_getting_out):
     global achievements, consecutive_wins
@@ -147,8 +163,11 @@ def load_achievements():
 
 def odd_even_game():
     global player_stats, consecutive_wins
-    print(colored(f"\nWelcome to the Odd-Even Game! Player: {player_name} ({player_country}) vs {bot_name} ({bot_country}) 🏆", 'blue'))
-    print(colored("Rules: Choose a number between 1-10. Your runs will add up. If you lose, the computer will play. ⚽", 'yellow'))
+    print(colored(
+        f"\nWelcome to the Odd-Even Game! Player: {player_name} ({player_country}) vs {bot_name} ({bot_country}) 🏆",
+        'blue'))
+    print(colored("Rules: Choose a number between 1-10. Your runs will add up. If you lose, the computer will play. ⚽",
+                  'yellow'))
 
     # Choose difficulty
     difficulty = input(colored("\nChoose difficulty level (easy/medium/hard): ⚡", 'yellow')).strip().lower()
@@ -160,7 +179,7 @@ def odd_even_game():
     computer_score = 0
 
     user_decision = toss()  # Player decides whether to bat or bowl
-    won_without_getting_out = True
+    won_without_getting_out = False
 
     # Game logic based on whether the player decides to bat or bowl
     if user_decision == 'bat':
@@ -176,7 +195,6 @@ def odd_even_game():
                 break
             user_score += player_input
             print(f"Your current score: {colored(user_score, 'green')} 🏆\n")
-            print(progress_bar(user_score, user_score))  # Update progress bar
 
         print(colored("\nYour opponent is batting now! 🏏", 'magenta'))
         while True:  # Infinite loop until someone gets out
@@ -191,6 +209,8 @@ def odd_even_game():
                 break
             computer_score += computer_input
             print(f"Computer's current score: {colored(computer_score, 'red')} ⚡\n")
+
+            # Now display progress bar only in second inning
             print(progress_bar(computer_score, user_score))  # Update progress bar
 
             if computer_score > user_score:
@@ -213,7 +233,6 @@ def odd_even_game():
                 break
             computer_score += computer_input
             print(f"Computer's current score: {colored(computer_score, 'red')} ⚡\n")
-            print(progress_bar(computer_score, computer_score))  # Update progress bar
 
         print(colored("\nYour turn to bat! 🏏", 'green'))
         while True:  # Infinite loop until someone gets out
@@ -226,6 +245,8 @@ def odd_even_game():
                 break
             user_score += player_input
             print(f"Your current score: {colored(user_score, 'green')} 🏆\n")
+
+            # Now display progress bar only in second inning
             print(progress_bar(user_score, computer_score))  # Update progress bar
 
             if user_score > computer_score:

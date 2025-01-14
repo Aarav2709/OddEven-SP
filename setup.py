@@ -1,10 +1,8 @@
-#No Bugs Yet!
-
 from distutils.core import setup
 
 setup(
     name='OddEven-SP',
-    version='1.0.2',
+    version='1.1.0',
     packages=['OddEvenSP'],
     url='https://github.com/Aarav2709/OddEven-SP',
     license='Apache License v2',
