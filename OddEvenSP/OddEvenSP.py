@@ -288,3 +288,4 @@ if __name__ == "__main__":
         if play_again != 'yes':
             print(colored("\nThanks for playing! Goodbye! ✌️", 'magenta'))
             sys.exit()
+ 
