@@ -1,2 +1,1 @@
 from .OddEvenSP import *
- 
