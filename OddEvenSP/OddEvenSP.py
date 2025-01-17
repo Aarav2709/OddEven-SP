@@ -45,16 +45,9 @@ def colored(text, color):
     return f"{color_mode.get(color, color_mode['reset'])}{text}{color_mode['reset']}"
 
 def progress_bar(current, target, length=20):
-    """Generate a smooth progress bar based on score with color and animation."""
-    progress = int((current / target) * length)  # Calculate the number of blocks to show
-    percentage = int((current / target) * 100)  # Calculate percentage
-    if percentage < 40:
-        color = 'red'
-    elif percentage < 70:
-        color = 'yellow'
-    else:
-        color = 'green'
-
+    progress = min(int((current / target) * length), length)  # Prevent overflow
+    percentage = min(int((current / target) * 100), 100)      # Cap percentage at 100
+    color = 'green' if percentage >= 70 else 'yellow' if percentage >= 40 else 'red'
     bar = f"[{'█' * progress}{' ' * (length - progress)}] {percentage}%"
     return f"Progress: {colored(bar, color)}"
 
@@ -119,6 +112,13 @@ def get_computer_input(difficulty, player_input=None, user_score=None, computer_
     # Default fallback if something goes wrong
     return random.randint(1, 10)
 
+def get_valid_input(prompt, valid_options):
+    while True:
+        user_input = input(colored(prompt, 'yellow')).strip().lower()
+        if user_input in valid_options:
+            return user_input
+        print(colored(f"Invalid choice! Please choose from: {', '.join(valid_options)}", 'red'))
+
 def check_achievements(user_score, difficulty, won_without_getting_out):
     global achievements, consecutive_wins
 
@@ -150,8 +150,11 @@ def check_achievements(user_score, difficulty, won_without_getting_out):
     print(colored(f"Current Win Streak: {consecutive_wins} 🏅", 'cyan'))
 
 def save_achievements():
-    with open("achievements.json", "w") as file:
-        json.dump(achievements, file)
+    try:
+        with open("achievements.json", "w") as file:
+            json.dump(achievements, file)
+    except Exception as e:
+        print(colored(f"Error saving achievements: {str(e)}", 'red'))
 
 def load_achievements():
     global achievements
@@ -159,7 +162,9 @@ def load_achievements():
         with open("achievements.json", "r") as file:
             achievements = json.load(file)
     except FileNotFoundError:
-        pass
+        print(colored("Achievements file not found. Starting fresh.", 'yellow'))
+    except Exception as e:
+        print(colored(f"Error loading achievements: {str(e)}", 'red'))
 
 def odd_even_game():
     global player_stats, consecutive_wins
