@@ -2,6 +2,13 @@ import json
 import random
 import sys
 
+# Constants for repeated values
+BAT = 'bat'
+BOWL = 'bowl'
+DIFFICULTIES = ['easy', 'medium', 'hard']
+ACHIEVEMENTS_FILE = "achievements.json"
+STATS_FILE = "player_stats.json"
+
 # Initialize player stats
 player_stats = {
     "wins": 0,
@@ -22,9 +29,14 @@ achievements = {
 consecutive_wins = 0
 
 # Dark/Light Mode Setup
-mode = input("Choose your mode: 'light' or 'dark' 🌞🌚: ").strip().lower()
-while mode not in ['light', 'dark']:
-    mode = input("Invalid mode! Choose 'light' or 'dark' 🌞🌚: ").strip().lower()
+def choose_mode():
+    """Let the user choose between dark and light mode."""
+    mode = input("Choose your mode: 'light' or 'dark' 🌞🌚: ").strip().lower()
+    while mode not in ['light', 'dark']:
+        mode = input("Invalid mode! Choose 'light' or 'dark' 🌞🌚: ").strip().lower()
+    return mode
+
+mode = choose_mode()
 
 colors = {
     'dark': {'red': '\033[91m', 'green': '\033[92m', 'yellow': '\033[93m', 'blue': '\033[94m', 'magenta': '\033[95m', 'cyan': '\033[96m', 'reset': '\033[0m'},
@@ -42,9 +54,11 @@ bot_country = random.choice(bot_countries)
 
 # Add some color to the text output
 def colored(text, color):
+    """Return colored text based on the selected mode."""
     return f"{color_mode.get(color, color_mode['reset'])}{text}{color_mode['reset']}"
 
 def progress_bar(current, target, length=20):
+    """Display a progress bar for the current score."""
     progress = min(int((current / target) * length), length)  # Prevent overflow
     percentage = min(int((current / target) * 100), 100)      # Cap percentage at 100
     color = 'green' if percentage >= 70 else 'yellow' if percentage >= 40 else 'red'
@@ -52,25 +66,22 @@ def progress_bar(current, target, length=20):
     return f"Progress: {colored(bar, color)}"
 
 def toss():
+    """Simulate a coin toss and let the player choose to bat or bowl."""
     print(colored("\nToss Time! Choose Heads or Tails 🍀", 'cyan'))
-    choice = input(colored("Enter 'Heads' or 'Tails': 🪙", 'yellow')).strip().lower()
+    choice = get_valid_input("Enter 'Heads' or 'Tails': 🪙", ['heads', 'tails'])
     result = random.choice(['heads', 'tails'])
     print(f"\n{colored(f'Toss Result: {result.capitalize()} 🎯', 'magenta')}")
+
     if choice == result:
         print(colored("\nYou won the toss! 🎉", 'green'))
-        decision = input(
-            colored("\nDo you want to Bat 🏏 or Bowl 🏆 first? (Enter 'Bat' or 'Bowl'): ", 'yellow')).strip().lower()
-        while decision not in ['bat', 'bowl']:
-            print(colored("Invalid choice! Please enter 'Bat' or 'Bowl'.", 'red'))
-            decision = input(
-                colored("\nDo you want to Bat 🏏 or Bowl 🏆 first? (Enter 'Bat' or 'Bowl'): ", 'yellow')).strip().lower()
+        decision = get_valid_input("\nDo you want to Bat 🏏 or Bowl 🏆 first? (Enter 'Bat' or 'Bowl'): ", [BAT, BOWL])
         return decision
     else:
         print(colored("\nYou lost the toss! Opponent will bowl first. 🏏", 'red'))
-        return 'bowl'
+        return BOWL
 
 def player_turn():
-    # This function will get the player's input
+    """Get the player's input for their turn."""
     while True:
         try:
             player_input = int(input("Enter a number between 1 and 10: "))
@@ -82,9 +93,7 @@ def player_turn():
             print("Invalid input! Please enter an integer between 1 and 10.")
 
 def get_computer_input(difficulty, player_input=None, user_score=None, computer_score=None, player_history=None):
-    """
-    Generate computer's input based on the selected difficulty level.
-    """
+    """Generate computer's input based on the selected difficulty level."""
     if difficulty == 'easy':
         return random.randint(1, 10)
 
@@ -113,6 +122,7 @@ def get_computer_input(difficulty, player_input=None, user_score=None, computer_
     return random.randint(1, 10)
 
 def get_valid_input(prompt, valid_options):
+    """Get valid input from the user."""
     while True:
         user_input = input(colored(prompt, 'yellow')).strip().lower()
         if user_input in valid_options:
@@ -120,6 +130,7 @@ def get_valid_input(prompt, valid_options):
         print(colored(f"Invalid choice! Please choose from: {', '.join(valid_options)}", 'red'))
 
 def check_achievements(user_score, difficulty, won_without_getting_out):
+    """Check and unlock achievements based on the game outcome."""
     global achievements, consecutive_wins
 
     # Check scoring achievements
@@ -149,24 +160,31 @@ def check_achievements(user_score, difficulty, won_without_getting_out):
     # Track and display current streak
     print(colored(f"Current Win Streak: {consecutive_wins} 🏅", 'cyan'))
 
-def save_achievements():
+def save_data():
+    """Save achievements and player stats to files."""
     try:
-        with open("achievements.json", "w") as file:
+        with open(ACHIEVEMENTS_FILE, "w") as file:
             json.dump(achievements, file)
+        with open(STATS_FILE, "w") as file:
+            json.dump(player_stats, file)
     except Exception as e:
-        print(colored(f"Error saving achievements: {str(e)}", 'red'))
+        print(colored(f"Error saving data: {str(e)}", 'red'))
 
-def load_achievements():
-    global achievements
+def load_data():
+    """Load achievements and player stats from files."""
+    global achievements, player_stats
     try:
-        with open("achievements.json", "r") as file:
+        with open(ACHIEVEMENTS_FILE, "r") as file:
             achievements = json.load(file)
+        with open(STATS_FILE, "r") as file:
+            player_stats = json.load(file)
     except FileNotFoundError:
-        print(colored("Achievements file not found. Starting fresh.", 'yellow'))
+        print(colored("Data files not found. Starting fresh.", 'yellow'))
     except Exception as e:
-        print(colored(f"Error loading achievements: {str(e)}", 'red'))
+        print(colored(f"Error loading data: {str(e)}", 'red'))
 
 def odd_even_game():
+    """Main game logic for the Odd-Even Game."""
     global player_stats, consecutive_wins
     print(colored(
         f"\nWelcome to the Odd-Even Game! Player: {player_name} ({player_country}) vs {bot_name} ({bot_country}) 🏆",
@@ -175,10 +193,7 @@ def odd_even_game():
                   'yellow'))
 
     # Choose difficulty
-    difficulty = input(colored("\nChoose difficulty level (easy/medium/hard): ⚡", 'yellow')).strip().lower()
-    while difficulty not in ['easy', 'medium', 'hard']:
-        print(colored("Invalid difficulty level. Please choose 'easy', 'medium', or 'hard'. 🚫", 'red'))
-        difficulty = input(colored("\nChoose difficulty level (easy/medium/hard): ⚡", 'yellow')).strip().lower()
+    difficulty = get_valid_input("\nChoose difficulty level (easy/medium/hard): ⚡", DIFFICULTIES)
 
     user_score = 0
     computer_score = 0
@@ -187,7 +202,7 @@ def odd_even_game():
     won_without_getting_out = False
 
     # Game logic based on whether the player decides to bat or bowl
-    if user_decision == 'bat':
+    if user_decision == BAT:
         print(colored("\nYou are batting! 🏏", 'green'))
         while True:  # Infinite loop until someone gets out
             player_input = player_turn()
@@ -283,10 +298,10 @@ def odd_even_game():
     print(f"Total Score: {colored(player_stats['total_score'], 'yellow')} 💯\n")
 
     check_achievements(user_score, difficulty, won_without_getting_out)
-    save_achievements()
+    save_data()
 
 if __name__ == "__main__":
-    load_achievements()
+    load_data()
     while True:
         odd_even_game()
         play_again = input(colored("\nDo you want to play again? (yes/no): 🌟", 'yellow')).strip().lower()
