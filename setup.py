@@ -17,10 +17,8 @@ setup(
     url="https://github.com/Aarav2709/OddEven-SP",
     classifiers=[
         "Development Status :: 4 - Beta",
-        "Intended Audience :: Education",
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3.11",
-        "Topic :: Games",
     ],
     python_requires=">=3.11",
     keywords="OddEven, SinglePlayer, Game, Cricket, Python",
