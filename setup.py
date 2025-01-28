@@ -21,7 +21,6 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3.11",
         "Topic :: Games",
-        "Topic :: Entertainment",
     ],
     python_requires=">=3.11",
     keywords="OddEven, SinglePlayer, Game, Cricket, Python",
