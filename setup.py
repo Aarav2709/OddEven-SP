@@ -7,7 +7,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="OddEven-SP",
-    version="2.0.0",
+    version="2.0.1",
     packages=["OddEvenSP"],
     description="So, welcome to my first ever Python Project! That is a game based on Odd Even, but with a twist of Cricket!",
     long_description=README,
