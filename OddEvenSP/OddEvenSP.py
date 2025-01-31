@@ -17,7 +17,7 @@ player_stats = {
     "level": 1,
     "xp": 0,
     "rank_points": 0,
-    "rank": "Beginner"
+    "rank": "Warrior"
 }
 
 # Initialize achievements
