@@ -13,7 +13,11 @@ STATS_FILE = "player_stats.json"
 player_stats = {
     "wins": 0,
     "losses": 0,
-    "total_score": 0
+    "total_score": 0,
+    "level": 1,
+    "xp": 0,
+    "rank_points": 0,
+    "rank": "Beginner"
 }
 
 # Initialize achievements
@@ -27,6 +31,12 @@ achievements = {
 
 # Track consecutive wins
 consecutive_wins = 0
+
+# Rank System
+RANKS = [
+    "Warrior", "Titan", "Blaster", "Striker", "Smasher", "Dynamo",
+    "Majestic", "Maverick", "Mighty", "Crusher", "Champion"
+]
 
 # Dark/Light Mode Setup
 def choose_mode():
@@ -47,8 +57,8 @@ color_mode = colors['dark'] if mode == 'dark' else colors['light']
 # Player and Bot Customization
 player_name = input("Enter your name: 🧑‍🦱👩‍🦱 ").strip()
 player_country = input("Enter your country: 🌍 ").strip()
-bot_names = ['BotScorer 🤖', 'ScoreAI 🤖', 'IMBOT 🤖', 'NubBot 🤖']
-bot_countries = ['USA 🇺🇸', 'India 🇮🇳', 'Australia 🇦🇺', 'England 🇬🇧']
+bot_names = ['Fankara', 'Lobamgi', 'Fola', 'Das', 'James', 'Rad', 'Logan', 'Sean', 'Osama', 'Jake', 'Guptill']
+bot_countries = ['West Indies', 'India', 'Australia', 'England', 'South Africa', 'New Zealand', 'Scotland', 'Netherlands', 'Pakistan']
 bot_name = random.choice(bot_names)
 bot_country = random.choice(bot_countries)
 
@@ -183,6 +193,47 @@ def load_data():
     except Exception as e:
         print(colored(f"Error loading data: {str(e)}", 'red'))
 
+def update_level_and_xp(score):
+    """Update player level and XP based on the score."""
+    global player_stats
+    xp_gained = score * 10  # XP is proportional to the score
+    player_stats["xp"] += xp_gained
+    xp_required = int(100 * (player_stats["level"] ** 1.5))  # XP required increases exponentially
+
+    while player_stats["xp"] >= xp_required:
+        player_stats["level"] += 1
+        player_stats["xp"] -= xp_required
+        xp_required = int(100 * (player_stats["level"] ** 1.5))
+        print(colored(f"Level Up! You are now Level {player_stats['level']} 🎉", 'green'))
+
+    # Return XP gained for display in match summary
+    return xp_gained
+
+def update_rank(outcome):
+    """Update player rank based on the game outcome."""
+    global player_stats
+    rank_index = RANKS.index(player_stats["rank"])
+    points_gained = 20 if outcome == "win" else -10  # Gain or lose points
+
+    player_stats["rank_points"] += points_gained
+
+    # Ensure rank points don't go negative
+    if player_stats["rank_points"] < 0:
+        player_stats["rank_points"] = 0
+
+    # Check for rank promotion or demotion
+    if rank_index < len(RANKS) - 1 and player_stats["rank_points"] >= 100:
+        player_stats["rank"] = RANKS[rank_index + 1]
+        player_stats["rank_points"] = 0
+        print(colored(f"Rank Up! You are now a {player_stats['rank']} 🎉", 'green'))
+    elif rank_index > 0 and player_stats["rank_points"] < 0:
+        player_stats["rank"] = RANKS[rank_index - 1]
+        player_stats["rank_points"] = 50
+        print(colored(f"Rank Down! You are now a {player_stats['rank']} 💔", 'red'))
+
+    # Return points gained for display in match summary
+    return points_gained
+
 def odd_even_game():
     """Main game logic for the Odd-Even Game."""
     global player_stats, consecutive_wins
@@ -226,6 +277,8 @@ def odd_even_game():
                 player_stats["wins"] += 1
                 player_stats["total_score"] += user_score
                 consecutive_wins += 1  # Increase streak
+                xp_gained = update_level_and_xp(user_score)
+                rp_gained = update_rank("win")
                 break
             computer_score += computer_input
             print(f"Computer's current score: {colored(computer_score, 'red')} ⚡\n")
@@ -237,6 +290,8 @@ def odd_even_game():
                 print(colored("\nComputer has surpassed your score! Computer wins. 💥", 'red'))
                 player_stats["losses"] += 1
                 consecutive_wins = 0  # Reset streak
+                xp_gained = update_level_and_xp(user_score)
+                rp_gained = update_rank("loss")
                 break
 
         if computer_score <= user_score:
@@ -274,12 +329,16 @@ def odd_even_game():
                 player_stats["wins"] += 1
                 player_stats["total_score"] += user_score
                 consecutive_wins += 1  # Increase streak
+                xp_gained = update_level_and_xp(user_score)
+                rp_gained = update_rank("win")
                 break
 
         if user_score <= computer_score:
             print(colored("\nComputer wins the game! Better luck next time. 💔", 'red'))
             player_stats["losses"] += 1
             consecutive_wins = 0  # Reset streak
+            xp_gained = update_level_and_xp(user_score)
+            rp_gained = update_rank("loss")
 
     # Match Summary with added emphasis
     print(colored("\n--- Match Summary --- 📜", 'blue'))
@@ -292,7 +351,11 @@ def odd_even_game():
     else:
         print(colored("\nComputer won the match! 💔", 'red'))
 
+    # Display current stats in the desired format
+    xp_required = int(100 * (player_stats["level"] ** 1.5))
     print(colored("\nYour Player Stats:", 'cyan'))
+    print(f"Level: {player_stats['level']} [{player_stats['xp']}/{xp_required} XP] +{xp_gained} XP")
+    print(f"Rank: {player_stats['rank']} [{player_stats['rank_points']}/100 RP] +{rp_gained} RP")
     print(f"Wins: {colored(player_stats['wins'], 'green')} 🏆")
     print(f"Losses: {colored(player_stats['losses'], 'red')} ⚡")
     print(f"Total Score: {colored(player_stats['total_score'], 'yellow')} 💯\n")
