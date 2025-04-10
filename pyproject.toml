@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OddEven-SP"
+version = "2.0.2"
+authors = [
+    { name = "Aarav Gupta", email = "tribejustice35@gmail.com" }
+]
+description = "So, welcome to my first ever Python Project! That is a game based on Odd Even, but with a twist of Cricket!"
+readme = "README.md"
+requires-python = ">=3.6"
+license = { text = "Apache Software License" }
+keywords = ["OddEven", "SinglePlayer", "Game", "Cricket", "Python"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.13",
+    "Intended Audience :: Education",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/Aarav2709/OddEven-SP"
+
+[tool.setuptools]
+packages = ["OddEvenSP"]
