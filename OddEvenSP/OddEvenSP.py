@@ -1,36 +1,16 @@
 import json
 import random
 import sys
+from typing import Dict, List, Tuple, Optional
 
-# Constants for repeated values
+# Constants
 BAT = 'bat'
 BOWL = 'bowl'
 DIFFICULTIES = ['easy', 'medium', 'hard']
 ACHIEVEMENTS_FILE = "achievements.json"
 STATS_FILE = "player_stats.json"
-
-# Initialize player stats
-player_stats = {
-    "wins": 0,
-    "losses": 0,
-    "total_score": 0,
-    "level": 1,
-    "xp": 0,
-    "rank_points": 0,
-    "rank": "Warrior"
-}
-
-# Initialize achievements
-achievements = {
-    "Score 50 Runs in a Game": False,
-    "Score 100 Runs in a Game": False,
-    "Win 3 Games in a Row": False,
-    "Win a Game on Hard": False,
-    "Win Without Getting Out": False
-}
-
-# Track consecutive wins
-consecutive_wins = 0
+MAX_SCORE = 10
+MIN_SCORE = 1
 
 # Rank System
 RANKS = [
@@ -38,336 +18,308 @@ RANKS = [
     "Majestic", "Maverick", "Mighty", "Crusher", "Champion"
 ]
 
-# Dark/Light Mode Setup
-def choose_mode():
-    """Let the user choose between dark and light mode."""
-    mode = input("Choose your mode: 'light' or 'dark' 🌞🌚: ").strip().lower()
-    while mode not in ['light', 'dark']:
-        mode = input("Invalid mode! Choose 'light' or 'dark' 🌞🌚: ").strip().lower()
-    return mode
+class GameState:
+    def __init__(self):
+        self.player_stats = {
+            "wins": 0,
+            "losses": 0,
+            "total_score": 0,
+            "level": 1,
+            "xp": 0,
+            "rank_points": 0,
+            "rank": "Warrior"
+        }
+        self.achievements = {
+            "Score 50 Runs in a Game": False,
+            "Score 100 Runs in a Game": False,
+            "Win 3 Games in a Row": False,
+            "Win a Game on Hard": False,
+            "Win Without Getting Out": False
+        }
+        self.consecutive_wins = 0
+        self.mode = 'dark'
+        self.player_history = []
+        self.colors = {
+            'dark': {'red': '\033[91m', 'green': '\033[92m', 'yellow': '\033[93m', 
+                    'blue': '\033[94m', 'magenta': '\033[95m', 'cyan': '\033[96m', 
+                    'reset': '\033[0m'},
+            'light': {'red': '\033[31m', 'green': '\033[32m', 'yellow': '\033[33m', 
+                     'blue': '\033[34m', 'magenta': '\033[35m', 'cyan': '\033[36m', 
+                     'reset': '\033[0m'}
+        }
 
-mode = choose_mode()
+    def colored(self, text: str, color: str) -> str:
+        """Return colored text based on the selected mode."""
+        return f"{self.colors[self.mode].get(color, self.colors[self.mode]['reset'])}{text}{self.colors[self.mode]['reset']}"
 
-colors = {
-    'dark': {'red': '\033[91m', 'green': '\033[92m', 'yellow': '\033[93m', 'blue': '\033[94m', 'magenta': '\033[95m', 'cyan': '\033[96m', 'reset': '\033[0m'},
-    'light': {'red': '\033[31m', 'green': '\033[32m', 'yellow': '\033[33m', 'blue': '\033[34m', 'magenta': '\033[35m', 'cyan': '\033[36m', 'reset': '\033[0m'}
-}
-color_mode = colors['dark'] if mode == 'dark' else colors['light']
+    def load_data(self):
+        """Load game data from files."""
+        try:
+            with open(ACHIEVEMENTS_FILE, "r") as file:
+                self.achievements = json.load(file)
+            with open(STATS_FILE, "r") as file:
+                self.player_stats = json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass  # Use defaults if files don't exist or are corrupt
 
-# Player and Bot Customization
-player_name = input("Enter your name: 🧑‍🦱👩‍🦱 ").strip()
-player_country = input("Enter your country: 🌍 ").strip()
-bot_names = ['Fankara', 'Lobamgi', 'Fola', 'Das', 'James', 'Rad', 'Logan', 'Sean', 'Osama', 'Jake', 'Guptill']
-bot_countries = ['West Indies', 'India', 'Australia', 'England', 'South Africa', 'New Zealand', 'Scotland', 'Netherlands', 'Pakistan']
-bot_name = random.choice(bot_names)
-bot_country = random.choice(bot_countries)
+    def save_data(self):
+        """Save game data to files."""
+        try:
+            with open(ACHIEVEMENTS_FILE, "w") as file:
+                json.dump(self.achievements, file)
+            with open(STATS_FILE, "w") as file:
+                json.dump(self.player_stats, file)
+        except IOError as e:
+            print(self.colored(f"Error saving data: {e}", 'red'))
 
-# Add some color to the text output
-def colored(text, color):
-    """Return colored text based on the selected mode."""
-    return f"{color_mode.get(color, color_mode['reset'])}{text}{color_mode['reset']}"
+    def get_valid_input(self, prompt: str, valid_options: List[str]) -> str:
+        """Get validated user input."""
+        while True:
+            user_input = input(self.colored(prompt, 'yellow')).strip().lower()
+            if user_input in valid_options:
+                return user_input
+            print(self.colored(f"Invalid choice! Please choose from: {', '.join(valid_options)}", 'red'))
 
-def progress_bar(current, target, length=20):
-    """Display a progress bar for the current score."""
-    progress = min(int((current / target) * length), length)  # Prevent overflow
-    percentage = min(int((current / target) * 100), 100)      # Cap percentage at 100
-    color = 'green' if percentage >= 70 else 'yellow' if percentage >= 40 else 'red'
-    bar = f"[{'█' * progress}{' ' * (length - progress)}] {percentage}%"
-    return f"Progress: {colored(bar, color)}"
+    def choose_mode(self):
+        """Let the user choose between dark and light mode."""
+        self.mode = self.get_valid_input(
+            "Choose your mode: 'light' or 'dark' 🌞🌚: ", 
+            ['light', 'dark']
+        )
 
-def toss():
-    """Simulate a coin toss and let the player choose to bat or bowl."""
-    print(colored("\nToss Time! Choose Heads or Tails 🍀", 'cyan'))
-    choice = get_valid_input("Enter 'Heads' or 'Tails': 🪙", ['heads', 'tails'])
-    result = random.choice(['heads', 'tails'])
-    print(f"\n{colored(f'Toss Result: {result.capitalize()} 🎯', 'magenta')}")
+    def progress_bar(self, current: int, target: int, length: int = 20) -> str:
+        """Display a progress bar."""
+        progress = min(int((current / target) * length), length)
+        percentage = min(int((current / target) * 100), 100)
+        color = 'green' if percentage >= 70 else 'yellow' if percentage >= 40 else 'red'
+        bar = f"[{'█' * progress}{' ' * (length - progress)}] {percentage}%"
+        return f"Progress: {self.colored(bar, color)}"
 
-    if choice == result:
-        print(colored("\nYou won the toss! 🎉", 'green'))
-        decision = get_valid_input("\nDo you want to Bat 🏏 or Bowl 🏆 first? (Enter 'Bat' or 'Bowl'): ", [BAT, BOWL])
-        return decision
-    else:
-        print(colored("\nYou lost the toss! Opponent will bowl first. 🏏", 'red'))
+    def toss(self) -> str:
+        """Simulate a coin toss."""
+        print(self.colored("\nToss Time! Choose Heads or Tails 🍀", 'cyan'))
+        choice = self.get_valid_input("Enter 'Heads' or 'Tails': 🪙", ['heads', 'tails'])
+        result = random.choice(['heads', 'tails'])
+        print(f"\n{self.colored(f'Toss Result: {result.capitalize()} 🎯', 'magenta')}")
+
+        if choice == result:
+            print(self.colored("\nYou won the toss! 🎉", 'green'))
+            return self.get_valid_input(
+                "\nDo you want to Bat 🏏 or Bowl 🏆 first? (Enter 'bat' or 'bowl'): ", 
+                [BAT, BOWL]
+            )
+        print(self.colored("\nYou lost the toss! Opponent will bowl first. 🏏", 'red'))
         return BOWL
 
-def player_turn():
-    """Get the player's input for their turn."""
-    while True:
-        try:
-            player_input = int(input("Enter a number between 1 and 10: "))
-            if 1 <= player_input <= 10:
-                return player_input
+    def player_turn(self) -> int:
+        """Get valid player input for their turn."""
+        while True:
+            try:
+                player_input = int(input("Enter a number between 1 and 10: "))
+                if MIN_SCORE <= player_input <= MAX_SCORE:
+                    self.player_history.append(player_input)
+                    return player_input
+                print(f"Please enter a number between {MIN_SCORE} and {MAX_SCORE}.")
+            except ValueError:
+                print("Invalid input! Please enter an integer.")
+
+    def get_computer_input(self, difficulty: str, player_input: Optional[int] = None, 
+                          user_score: int = 0, computer_score: int = 0) -> int:
+        """Generate computer's move based on difficulty."""
+        if difficulty == 'easy':
+            return random.randint(MIN_SCORE, MAX_SCORE)
+        
+        elif difficulty == 'medium':
+            comp_input = random.randint(MIN_SCORE, MAX_SCORE)
+            while player_input and comp_input == player_input:
+                comp_input = random.randint(MIN_SCORE, MAX_SCORE)
+            return comp_input
+        
+        elif difficulty == 'hard':
+            if len(self.player_history) >= 3:
+                predicted = max(set(self.player_history[-3:]), key=self.player_history[-3:].count)
             else:
-                print("Please enter a number between 1 and 10.")
-        except ValueError:
-            print("Invalid input! Please enter an integer between 1 and 10.")
+                predicted = random.randint(MIN_SCORE, MAX_SCORE)
+            
+            if computer_score < user_score:
+                return random.choice([predicted, (predicted + 1) % (MAX_SCORE + 1) or MAX_SCORE])
+            return random.choice([predicted, (predicted - 1) % (MAX_SCORE + 1) or MIN_SCORE])
+        
+        return random.randint(MIN_SCORE, MAX_SCORE)
 
-def get_computer_input(difficulty, player_input=None, user_score=None, computer_score=None, player_history=None):
-    """Generate computer's input based on the selected difficulty level."""
-    if difficulty == 'easy':
-        return random.randint(1, 10)
+    def update_stats(self, score: int, outcome: str) -> Tuple[int, int]:
+        """Update player stats and return XP and RP gained."""
+        xp_gained = score * 10
+        self.player_stats["xp"] += xp_gained
+        xp_required = int(100 * (self.player_stats["level"] ** 1.5))
 
-    elif difficulty == 'medium':
-        # Avoids picking the same number as the player
-        computer_input = random.randint(1, 10)
-        while computer_input == player_input:
-            computer_input = random.randint(1, 10)
-        return computer_input
+        while self.player_stats["xp"] >= xp_required:
+            self.player_stats["level"] += 1
+            self.player_stats["xp"] -= xp_required
+            xp_required = int(100 * (self.player_stats["level"] ** 1.5))
+            print(self.colored(f"Level Up! You are now Level {self.player_stats['level']} 🎉", 'green'))
 
-    elif difficulty == 'hard':
-        if not player_history:
-            player_history = []
+        rp_gained = 20 if outcome == "win" else -10
+        self.player_stats["rank_points"] = max(0, self.player_stats["rank_points"] + rp_gained)
+        
+        rank_index = RANKS.index(self.player_stats["rank"])
+        if rank_index < len(RANKS) - 1 and self.player_stats["rank_points"] >= 100:
+            self.player_stats["rank"] = RANKS[rank_index + 1]
+            self.player_stats["rank_points"] = 0
+            print(self.colored(f"Rank Up! You are now a {self.player_stats['rank']} 🎉", 'green'))
+        elif rank_index > 0 and self.player_stats["rank_points"] < 0:
+            self.player_stats["rank"] = RANKS[rank_index - 1]
+            self.player_stats["rank_points"] = 50
+            print(self.colored(f"Rank Down! You are now a {self.player_stats['rank']} 💔", 'red'))
 
-        if len(player_history) >= 3:
-            predicted_input = max(set(player_history[-3:]), key=player_history[-3:].count)
+        return xp_gained, rp_gained
+
+    def check_achievements(self, score: int, difficulty: str, perfect_win: bool):
+        """Check and unlock achievements."""
+        if score >= 50 and not self.achievements["Score 50 Runs in a Game"]:
+            self.achievements["Score 50 Runs in a Game"] = True
+            print(self.colored("Achievement Unlocked: Score 50 Runs in a Game! 🏅", 'green'))
+        
+        if score >= 100 and not self.achievements["Score 100 Runs in a Game"]:
+            self.achievements["Score 100 Runs in a Game"] = True
+            print(self.colored("Achievement Unlocked: Score 100 Runs in a Game! 🏅", 'green'))
+        
+        if self.consecutive_wins >= 3 and not self.achievements["Win 3 Games in a Row"]:
+            self.achievements["Win 3 Games in a Row"] = True
+            print(self.colored("Achievement Unlocked: Win 3 Games in a Row! 🏅", 'green'))
+        
+        if difficulty == 'hard' and not self.achievements["Win a Game on Hard"]:
+            self.achievements["Win a Game on Hard"] = True
+            print(self.colored("Achievement Unlocked: Win a Game on Hard! 🏅", 'green'))
+        
+        if perfect_win and not self.achievements["Win Without Getting Out"]:
+            self.achievements["Win Without Getting Out"] = True
+            print(self.colored("Achievement Unlocked: Win Without Getting Out! 🏅", 'green'))
+        
+        print(self.colored(f"Current Win Streak: {self.consecutive_wins} 🏅", 'cyan'))
+
+    def play_innings(self, batting: str, difficulty: str, target: Optional[int] = None) -> Tuple[int, bool]:
+        """Play one innings of the game."""
+        score = 0
+        player_batting = batting == 'player'
+        perfect = True
+        
+        while True:
+            player_input = self.player_turn()
+            comp_input = self.get_computer_input(
+                difficulty, 
+                player_input if player_batting else None,
+                score if player_batting else 0,
+                0 if player_batting else score
+            )
+            
+            print(f"\nComputer chose: {self.colored(comp_input, 'cyan')} 🤖")
+            
+            if player_input == comp_input:
+                print(self.colored("\nOut! Innings over. 🛑", 'red'))
+                perfect = False
+                break
+                
+            score += player_input if player_batting else comp_input
+            print(f"Current score: {self.colored(score, 'green' if player_batting else 'red')} "
+                  f"{'🏏' if player_batting else '⚡'}")
+            
+            if target and score > target:
+                break
+                
+        return score, perfect
+
+    def play_game(self):
+        """Main game loop."""
+        print(self.colored("\nWelcome to the Odd-Even Game!", 'blue'))
+        print(self.colored("Rules: Choose numbers 1-10. Match means out!", 'yellow'))
+
+        difficulty = self.get_valid_input(
+            "\nChoose difficulty (easy/medium/hard): ⚡", 
+            DIFFICULTIES
+        )
+        
+        decision = self.toss()
+        player_score, comp_score = 0, 0
+        perfect_win = False
+
+        if decision == BAT:
+            print(self.colored("\nYou're batting first! 🏏", 'green'))
+            player_score, _ = self.play_innings('player', difficulty)
+            print(self.colored(f"\nYour total: {player_score} 🏆", 'green'))
+            
+            print(self.colored("\nNow bowling! 🏏", 'magenta'))
+            comp_score, _ = self.play_innings('computer', difficulty, player_score)
+            
+            if comp_score <= player_score:
+                self.player_stats["wins"] += 1
+                self.player_stats["total_score"] += player_score
+                self.consecutive_wins += 1
+                xp, rp = self.update_stats(player_score, "win")
+                print(self.colored("\nYou win! 🎉", 'green'))
+                perfect_win = comp_score < player_score
+            else:
+                self.player_stats["losses"] += 1
+                self.consecutive_wins = 0
+                xp, rp = self.update_stats(player_score, "loss")
+                print(self.colored("\nComputer wins! 💔", 'red'))
         else:
-            predicted_input = random.randint(1, 10)
+            print(self.colored("\nComputer is batting first! 🏏", 'magenta'))
+            comp_score, _ = self.play_innings('computer', difficulty)
+            print(self.colored(f"\nComputer's total: {comp_score} ⚡", 'red'))
+            
+            print(self.colored("\nNow batting! 🏏", 'green'))
+            player_score, perfect = self.play_innings('player', difficulty, comp_score)
+            
+            if player_score > comp_score:
+                self.player_stats["wins"] += 1
+                self.player_stats["total_score"] += player_score
+                self.consecutive_wins += 1
+                xp, rp = self.update_stats(player_score, "win")
+                print(self.colored("\nYou win! 🎉", 'green'))
+                perfect_win = perfect
+            else:
+                self.player_stats["losses"] += 1
+                self.consecutive_wins = 0
+                xp, rp = self.update_stats(player_score, "loss")
+                print(self.colored("\nComputer wins! 💔", 'red'))
 
-        if computer_score < user_score:
-            return random.choice([predicted_input, predicted_input + 1]) % 10 or 10
-        else:
-            return random.choice([predicted_input - 1, predicted_input]) % 10 or 10
+        # Match summary
+        print(self.colored("\n--- Match Summary --- 📜", 'blue'))
+        print(f"Difficulty: {self.colored(difficulty.capitalize(), 'yellow')} ⚡")
+        print(f"Your Score: {self.colored(player_score, 'green')} 🏆")
+        print(f"Computer Score: {self.colored(comp_score, 'red')} ⚡")
+        
+        xp_needed = int(100 * (self.player_stats["level"] ** 1.5))
+        print(self.colored("\nPlayer Stats:", 'cyan'))
+        print(f"Level: {self.player_stats['level']} [{self.player_stats['xp']}/{xp_needed} XP] +{xp} XP")
+        print(f"Rank: {self.player_stats['rank']} [{self.player_stats['rank_points']}/100 RP] +{rp} RP")
+        print(f"Wins: {self.colored(self.player_stats['wins'], 'green')} 🏆")
+        print(f"Losses: {self.colored(self.player_stats['losses'], 'red')} ⚡")
+        print(f"Total Score: {self.colored(self.player_stats['total_score'], 'yellow')} 💯")
 
-    # Default fallback if something goes wrong
-    return random.randint(1, 10)
+        self.check_achievements(player_score, difficulty, perfect_win)
+        self.save_data()
 
-def get_valid_input(prompt, valid_options):
-    """Get valid input from the user."""
+def main():
+    game = GameState()
+    game.load_data()
+    game.choose_mode()
+    
+    bot_names = ['Fankara', 'Lobamgi', 'Fola', 'Das', 'James', 'Rad']
+    bot_countries = ['West Indies', 'India', 'Australia', 'England']
+    
+    print(game.colored(
+        f"\nPlayer: {input('Enter your name: ')} ({input('Enter your country: ')}) vs "
+        f"{random.choice(bot_names)} ({random.choice(bot_countries)}) 🏆",
+        'blue'
+    ))
+
     while True:
-        user_input = input(colored(prompt, 'yellow')).strip().lower()
-        if user_input in valid_options:
-            return user_input
-        print(colored(f"Invalid choice! Please choose from: {', '.join(valid_options)}", 'red'))
-
-def check_achievements(user_score, difficulty, won_without_getting_out):
-    """Check and unlock achievements based on the game outcome."""
-    global achievements, consecutive_wins
-
-    # Check scoring achievements
-    if user_score >= 50 and not achievements["Score 50 Runs in a Game"]:
-        achievements["Score 50 Runs in a Game"] = True
-        print(colored("Achievement Unlocked: Score 50 Runs in a Game! 🏅", 'green'))
-
-    if user_score >= 100 and not achievements["Score 100 Runs in a Game"]:
-        achievements["Score 100 Runs in a Game"] = True
-        print(colored("Achievement Unlocked: Score 100 Runs in a Game! 🏅", 'green'))
-
-    # Check consecutive wins achievement
-    if consecutive_wins >= 3 and not achievements["Win 3 Games in a Row"]:
-        achievements["Win 3 Games in a Row"] = True
-        print(colored("Achievement Unlocked: Win 3 Games in a Row! 🏅", 'green'))
-
-    # Check difficulty achievement
-    if difficulty == 'hard' and not achievements["Win a Game on Hard"]:
-        achievements["Win a Game on Hard"] = True
-        print(colored("Achievement Unlocked: Win a Game on Hard! 🏅", 'green'))
-
-    # Check special achievement
-    if won_without_getting_out and not achievements["Win Without Getting Out"]:
-        achievements["Win Without Getting Out"] = True
-        print(colored("Achievement Unlocked: Win Without Getting Out! 🏅", 'green'))
-
-    # Track and display current streak
-    print(colored(f"Current Win Streak: {consecutive_wins} 🏅", 'cyan'))
-
-def save_data():
-    """Save achievements and player stats to files."""
-    try:
-        with open(ACHIEVEMENTS_FILE, "w") as file:
-            json.dump(achievements, file)
-        with open(STATS_FILE, "w") as file:
-            json.dump(player_stats, file)
-    except Exception as e:
-        print(colored(f"Error saving data: {str(e)}", 'red'))
-
-def load_data():
-    """Load achievements and player stats from files."""
-    global achievements, player_stats
-    try:
-        with open(ACHIEVEMENTS_FILE, "r") as file:
-            achievements = json.load(file)
-        with open(STATS_FILE, "r") as file:
-            player_stats = json.load(file)
-    except FileNotFoundError:
-        print(colored("Data files not found. Starting fresh.", 'yellow'))
-    except Exception as e:
-        print(colored(f"Error loading data: {str(e)}", 'red'))
-
-def update_level_and_xp(score):
-    """Update player level and XP based on the score."""
-    global player_stats
-    xp_gained = score * 10  # XP is proportional to the score
-    player_stats["xp"] += xp_gained
-    xp_required = int(100 * (player_stats["level"] ** 1.5))  # XP required increases exponentially
-
-    while player_stats["xp"] >= xp_required:
-        player_stats["level"] += 1
-        player_stats["xp"] -= xp_required
-        xp_required = int(100 * (player_stats["level"] ** 1.5))
-        print(colored(f"Level Up! You are now Level {player_stats['level']} 🎉", 'green'))
-
-    # Return XP gained for display in match summary
-    return xp_gained
-
-def update_rank(outcome):
-    """Update player rank based on the game outcome."""
-    global player_stats
-    rank_index = RANKS.index(player_stats["rank"])
-    points_gained = 20 if outcome == "win" else -10  # Gain or lose points
-
-    player_stats["rank_points"] += points_gained
-
-    # Ensure rank points don't go negative
-    if player_stats["rank_points"] < 0:
-        player_stats["rank_points"] = 0
-
-    # Check for rank promotion or demotion
-    if rank_index < len(RANKS) - 1 and player_stats["rank_points"] >= 100:
-        player_stats["rank"] = RANKS[rank_index + 1]
-        player_stats["rank_points"] = 0
-        print(colored(f"Rank Up! You are now a {player_stats['rank']} 🎉", 'green'))
-    elif rank_index > 0 and player_stats["rank_points"] < 0:
-        player_stats["rank"] = RANKS[rank_index - 1]
-        player_stats["rank_points"] = 50
-        print(colored(f"Rank Down! You are now a {player_stats['rank']} 💔", 'red'))
-
-    # Return points gained for display in match summary
-    return points_gained
-
-def odd_even_game():
-    """Main game logic for the Odd-Even Game."""
-    global player_stats, consecutive_wins
-    print(colored(
-        f"\nWelcome to the Odd-Even Game! Player: {player_name} ({player_country}) vs {bot_name} ({bot_country}) 🏆",
-        'blue'))
-    print(colored("Rules: Choose a number between 1-10. Your runs will add up. If you lose, the computer will play. ⚽",
-                  'yellow'))
-
-    # Choose difficulty
-    difficulty = get_valid_input("\nChoose difficulty level (easy/medium/hard): ⚡", DIFFICULTIES)
-
-    user_score = 0
-    computer_score = 0
-
-    user_decision = toss()  # Player decides whether to bat or bowl
-    won_without_getting_out = False
-
-    # Game logic based on whether the player decides to bat or bowl
-    if user_decision == BAT:
-        print(colored("\nYou are batting! 🏏", 'green'))
-        while True:  # Infinite loop until someone gets out
-            player_input = player_turn()
-            computer_input = get_computer_input(difficulty, player_input, user_score, computer_score)
-            print(f"\n{bot_name} chose: {colored(computer_input, 'cyan')} 🤖")
-            if player_input == computer_input:
-                print(colored("\nOut! Your innings is over. 🛑", 'red'))
-                target_score = user_score
-                won_without_getting_out = False
-                break
-            user_score += player_input
-            print(f"Your current score: {colored(user_score, 'green')} 🏆\n")
-
-        print(colored("\nYour opponent is batting now! 🏏", 'magenta'))
-        while True:  # Infinite loop until someone gets out
-            computer_input = get_computer_input(difficulty, user_score=user_score, computer_score=computer_score)
-            player_input = player_turn()
-            print(f"\n{bot_name} chose: {colored(computer_input, 'cyan')} 🤖")
-            if player_input == computer_input:
-                print(colored("\nComputer is out! You won the game! 🎉", 'green'))
-                player_stats["wins"] += 1
-                player_stats["total_score"] += user_score
-                consecutive_wins += 1  # Increase streak
-                xp_gained = update_level_and_xp(user_score)
-                rp_gained = update_rank("win")
-                break
-            computer_score += computer_input
-            print(f"Computer's current score: {colored(computer_score, 'red')} ⚡\n")
-
-            # Now display progress bar only in second inning
-            print(progress_bar(computer_score, user_score))  # Update progress bar
-
-            if computer_score > user_score:
-                print(colored("\nComputer has surpassed your score! Computer wins. 💥", 'red'))
-                player_stats["losses"] += 1
-                consecutive_wins = 0  # Reset streak
-                xp_gained = update_level_and_xp(user_score)
-                rp_gained = update_rank("loss")
-                break
-
-        if computer_score <= user_score:
-            print(colored("\nCongratulations! You won the game. 🎉", 'green'))
-    else:
-        print(colored("\nComputer is batting first! 🏏", 'magenta'))
-        while True:  # Infinite loop until someone gets out
-            computer_input = get_computer_input(difficulty, user_score=user_score, computer_score=computer_score)
-            player_input = player_turn()
-            print(f"\n{bot_name} chose: {colored(computer_input, 'cyan')} 🤖")
-            if player_input == computer_input:
-                print(colored("\nComputer is out! Their innings is over. 🛑", 'red'))
-                target_score = computer_score
-                break
-            computer_score += computer_input
-            print(f"Computer's current score: {colored(computer_score, 'red')} ⚡\n")
-
-        print(colored("\nYour turn to bat! 🏏", 'green'))
-        while True:  # Infinite loop until someone gets out
-            player_input = player_turn()
-            computer_input = get_computer_input(difficulty, user_score=user_score, computer_score=computer_score)
-            print(f"\n{bot_name} chose: {colored(computer_input, 'cyan')} 🤖")
-            if player_input == computer_input:
-                print(colored("\nOut! Your innings is over. 🛑", 'red'))
-                won_without_getting_out = False
-                break
-            user_score += player_input
-            print(f"Your current score: {colored(user_score, 'green')} 🏆\n")
-
-            # Now display progress bar only in second inning
-            print(progress_bar(user_score, computer_score))  # Update progress bar
-
-            if user_score > computer_score:
-                print(colored("\nYou have surpassed the computer's score! You win. 🎉", 'green'))
-                player_stats["wins"] += 1
-                player_stats["total_score"] += user_score
-                consecutive_wins += 1  # Increase streak
-                xp_gained = update_level_and_xp(user_score)
-                rp_gained = update_rank("win")
-                break
-
-        if user_score <= computer_score:
-            print(colored("\nComputer wins the game! Better luck next time. 💔", 'red'))
-            player_stats["losses"] += 1
-            consecutive_wins = 0  # Reset streak
-            xp_gained = update_level_and_xp(user_score)
-            rp_gained = update_rank("loss")
-
-    # Match Summary with added emphasis
-    print(colored("\n--- Match Summary --- 📜", 'blue'))
-    print(f"Difficulty Level: {colored(difficulty.capitalize(), 'yellow')} ⚡")
-    print(f"Your Final Score: {colored(user_score, 'green')} 🏆")
-    print(f"{bot_name}'s Final Score: {colored(computer_score, 'red')} ⚡")
-
-    if user_score > computer_score:
-        print(colored("\nYou won the match! 🎉", 'green'))
-    else:
-        print(colored("\nComputer won the match! 💔", 'red'))
-
-    # Display current stats in the desired format
-    xp_required = int(100 * (player_stats["level"] ** 1.5))
-    print(colored("\nYour Player Stats:", 'cyan'))
-    print(f"Level: {player_stats['level']} [{player_stats['xp']}/{xp_required} XP] +{xp_gained} XP")
-    print(f"Rank: {player_stats['rank']} [{player_stats['rank_points']}/100 RP] +{rp_gained} RP")
-    print(f"Wins: {colored(player_stats['wins'], 'green')} 🏆")
-    print(f"Losses: {colored(player_stats['losses'], 'red')} ⚡")
-    print(f"Total Score: {colored(player_stats['total_score'], 'yellow')} 💯\n")
-
-    check_achievements(user_score, difficulty, won_without_getting_out)
-    save_data()
+        game.play_game()
+        if game.get_valid_input("\nPlay again? (yes/no): 🌟", ['yes', 'no']) == 'no':
+            print(game.colored("\nThanks for playing! Goodbye! ✌️", 'magenta'))
+            break
 
 if __name__ == "__main__":
-    load_data()
-    while True:
-        odd_even_game()
-        play_again = input(colored("\nDo you want to play again? (yes/no): 🌟", 'yellow')).strip().lower()
-        if play_again != 'yes':
-            print(colored("\nThanks for playing! Goodbye! ✌️", 'magenta'))
-            sys.exit()
+    main()
