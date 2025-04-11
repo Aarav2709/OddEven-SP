@@ -1,4 +1,8 @@
 [![PyPI Downloads](https://static.pepy.tech/badge/oddeven-sp)](https://pepy.tech/projects/oddeven-sp)
+[![PyPI version](https://img.shields.io/pypi/v/OddEvenSP.svg)](https://pypi.org/project/OddEvenSP/)
+[![Downloads](https://img.shields.io/pypi/dm/OddEvenSP.svg)](https://pypi.org/project/OddEvenSP/)
+[![Python Version](https://img.shields.io/pypi/pyversions/OddEvenSP.svg)](https://pypi.org/project/OddEvenSP/)
+[![License](https://img.shields.io/github/license/your-username/OddEvenSP)](https://github.com/your-username/OddEvenSP/blob/main/LICENSE)
 
 # 🟡 OddEvenSP
 
@@ -22,7 +26,6 @@ Once installed, create a new Python file (e.g., `play.py`) and add the following
 
 ```python
 from OddEvenSP import main
-
 main()
 ```
 
