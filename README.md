@@ -1,8 +1,8 @@
 [![PyPI Downloads](https://static.pepy.tech/badge/oddeven-sp)](https://pepy.tech/projects/oddeven-sp)
-[![PyPI version](https://img.shields.io/pypi/v/OddEvenSP.svg)](https://pypi.org/project/OddEvenSP/)
-[![Downloads](https://img.shields.io/pypi/dm/OddEvenSP.svg)](https://pypi.org/project/OddEvenSP/)
-[![Python Version](https://img.shields.io/pypi/pyversions/OddEvenSP.svg)](https://pypi.org/project/OddEvenSP/)
-[![License](https://img.shields.io/github/license/your-username/OddEvenSP)](https://github.com/your-username/OddEvenSP/blob/main/LICENSE)
+[![PyPI version](https://img.shields.io/pypi/v/OddEven-SP.svg)](https://pypi.org/project/OddEven-SP/)
+[![Downloads](https://img.shields.io/pypi/dm/OddEven-SP.svg)](https://pypi.org/project/OddEven-SP/)
+[![Python Version](https://img.shields.io/pypi/pyversions/OddEven-SP.svg)](https://pypi.org/project/OddEven-SP/)
+[![License](https://img.shields.io/github/license/Aarav2709/OddEvenSP)](https://github.com/Aarav2709/OddEvenSP/blob/main/LICENSE)
 
 # 🟡 OddEvenSP
 
