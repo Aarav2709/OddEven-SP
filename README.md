@@ -1,13 +1,3 @@
-So, welcome to my first ever **Python Project**! That is a game based on *Odd Even*, but with a twist of **Cricket!**
-To install the Game, run `pip install OddEven-SP` in your Terminal. If you have already installed the game, then please run `pip install OddEven-SP --upgrade`. 
-
-To initiate the game, you need to create a new Python File and type:
-```py
-from OddEvenSP import odd_even_game
-odd_even_game()
-```
-# Enjoy! Make sure to give Feedback!
-
 [![PyPI Downloads](https://static.pepy.tech/badge/oddeven-sp)](https://pepy.tech/projects/oddeven-sp)
 
 # 🟡 OddEvenSP
@@ -66,18 +56,6 @@ Track your wins, losses, level, XP, rank, and unlock fun achievements like:
 
 ---
 
-## ⚙️ Project Structure
-
-```text
-OddEvenSP/
-├── __init__.py
-├── main.py
-├── achievements.json      # Stored achievements
-├── player_stats.json      # Stored player stats
-```
-
----
-
 ## 🧠 How the Game Works
 
 - You pick a number between 1 and 10.
@@ -93,13 +71,5 @@ Choose your mode wisely — the terminal theme affects how the colors appear.
 
 ---
 
-## ❓ Support
 
-Have questions or suggestions? Feel free to open an issue or start a discussion on the [GitHub repo](https://github.com/your-username/OddEvenSP).
-
----
-
-## 📜 License
-
-MIT License – use it, share it, improve it. 🚀
 
