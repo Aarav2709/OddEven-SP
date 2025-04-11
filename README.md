@@ -1,13 +1,11 @@
+# 🟡 OddEvenSP
+
+OddEvenSP is a fun, interactive terminal-based game where you challenge a computer opponent in a thrilling game of odd-even cricket! Featuring dark/light mode, rank progression, achievements, and smart AI.
 [![PyPI Downloads](https://static.pepy.tech/badge/oddeven-sp)](https://pepy.tech/projects/oddeven-sp)
 [![PyPI version](https://img.shields.io/pypi/v/OddEven-SP.svg)](https://pypi.org/project/OddEven-SP/)
 [![Downloads](https://img.shields.io/pypi/dm/OddEven-SP.svg)](https://pypi.org/project/OddEven-SP/)
 [![Python Version](https://img.shields.io/pypi/pyversions/OddEven-SP.svg)](https://pypi.org/project/OddEven-SP/)
 [![License](https://img.shields.io/github/license/Aarav2709/OddEven-SP)](https://github.com/Aarav2709/OddEven-SP/blob/main/LICENSE)
-
-
-# 🟡 OddEvenSP
-
-OddEvenSP is a fun, interactive terminal-based game where you challenge a computer opponent in a thrilling game of odd-even cricket! Featuring dark/light mode, rank progression, achievements, and smart AI.
 
 ---
 
