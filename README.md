@@ -1,4 +1,4 @@
-## 🟡 OddEvenSP
+# 🟡 OddEvenSP
 
 OddEvenSP is a fun, interactive terminal-based game where you challenge a computer opponent in a thrilling game of odd-even cricket! Featuring dark/light mode, rank progression, achievements, and smart AI.
 
