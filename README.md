@@ -72,4 +72,11 @@ Track your wins, losses, level, XP, rank, and unlock fun achievements like:
 
 Choose your mode wisely — the terminal theme affects how the colors appear.
 
+<<<<<<< HEAD
 ---
+=======
+---
+
+
+
+>>>>>>> 76c9c7074411639e20900502ca3b068c03dca1ea
