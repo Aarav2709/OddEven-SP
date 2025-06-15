@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OddEvenSP</title>
+    <meta name="description" content="A beautiful black and white minimalist cricket game. Challenge the AI in odd-even cricket!">
+    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    
+    <div class="bg-particles"></div>
+    
+    
+    <header class="header">
+        <nav class="navbar" style="justify-content: center;">
+            <ul class="nav-links" style="display: flex; align-items: center; gap: 1rem;">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/game" class="nav-link">Play</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/stats" class="nav-link">Stats</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/progress" class="nav-link">Progress</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/achievements" class="nav-link">Achievements</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    
+    <main>
+        
+        <section class="section" id="hero">
+            <div class="container">
+                <div class="text-center">
+                    <h1 class="title-xl mb-4" data-animate>
+                        OddEven<span style="font-weight: 300;">SP</span>
+                    </h1>
+                    <p class="title-lg mb-4" data-animate style="color: var(--gray-dark); font-weight: 400;">
+                        Minimalist Cricket • AI Opponent • Pure Strategy.
+                    </p>
+                    <div data-animate>
+                        <a href="/game" class="btn btn-primary">Start Playing</a>
+                        <a href="/stats" class="btn">View Stats</a>
+                    </div>
+                    
+                    
+                    <div data-animate style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--primary-black); opacity: 0.6;">
+                        <p style="font-size: 0.75rem; color: var(--primary-black); margin: 0;">© 2025 OddEvenSP. A New Way to Play Cricket.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

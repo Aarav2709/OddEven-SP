@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OddEvenSP - Game</title>
+    <meta name="description" content="Play the minimalist cricket game against AI opponents">
+    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    
+    <div class="bg-particles"></div>
+    
+    
+    <header class="header">
+        <nav class="navbar" style="justify-content: center;">
+            <ul class="nav-links" style="display: flex; align-items: center; gap: 1rem;">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/game" class="nav-link">Play</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/stats" class="nav-link">Stats</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/progress" class="nav-link">Progress</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/achievements" class="nav-link">Achievements</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    
+    <div class="game-container">
+        
+        <div id="toss-interface" style="display: none;">
+            <div class="game-header">
+                <h1 class="title-lg animate-fade-in">Coin Toss</h1>
+                <p class="text-mono animate-fade-in">Call heads or tails to win the toss.</p>
+            </div>
+
+            <div class="card animate-slide-up text-center">
+                <div class="coin-container" style="margin: 2rem 0;">
+                    <div id="coin" class="coin">
+                        <div class="coin-side heads">H</div>
+                        <div class="coin-side tails">T</div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; gap: 1.5rem;">
+                    <div style="text-align: center;">
+                        <p class="font-bold mb-4">Make your call:</p>
+                        <div style="display: flex; gap: 1.5rem; justify-content: center; align-items: center;">
+                            <button id="call-heads" class="btn toss-btn">
+                                Heads
+                            </button>
+                            <button id="call-tails" class="btn toss-btn">
+                                Tails
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="toss-result" style="display: none;">
+            <div class="game-header">
+                <h1 class="title-lg animate-fade-in">Toss Result</h1>
+                <p id="toss-outcome" class="text-mono animate-fade-in"></p>
+            </div>
+
+            <div class="card animate-slide-up text-center">
+                <div id="toss-winner-message" class="mb-4"></div>
+                <div id="choice-selection" style="display: none;">
+                    <p class="font-bold mb-4">You won the toss! Choose to:</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button id="choose-bat" class="btn">
+                            Bat First
+                        </button>
+                        <button id="choose-bowl" class="btn">
+                            Bowl First
+                        </button>
+                    </div>
+                </div>
+                <div id="bot-choice" style="display: none;">
+                    <p class="font-bold mb-4">Bot won the toss and chose to <span id="bot-decision"></span>!</p>
+                    <button id="proceed-after-toss" class="btn btn-primary" style="display: none;">
+                        Continue to Game
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="game-setup">
+            <div class="game-header">
+                <h1 class="title-lg animate-fade-in">Start New Game</h1>
+                <p class="text-mono animate-fade-in">Configure your match settings.</p>
+            </div>
+
+            <div class="card animate-slide-up">
+                <div style="display: grid; gap: 2rem;">
+                    
+                    <div>
+                        <label for="player-name" class="font-bold">Your Name</label>
+                        <input 
+                            type="text" 
+                            id="player-name" 
+                            placeholder="Enter your name."
+                            style="
+                                width: 100%;
+                                padding: 0.75rem;
+                                border: 2px solid var(--primary-black);
+                                background: var(--primary-white);
+                                color: var(--primary-black);
+                                margin-top: 0.5rem;
+                                font-family: var(--font-mono);
+                                font-size: 1rem;
+                                transition: var(--transition-fast);
+                            "
+                        >
+                    </div>
+
+                    
+                    <input type="radio" name="mode" value="bat" checked style="display: none;">
+                    <input type="radio" name="mode" value="bowl" style="display: none;">
+
+                    
+                    <div>
+                        <label for="difficulty" class="font-bold">Difficulty</label>
+                        <select 
+                            id="difficulty" 
+                            style="
+                                width: 100%;
+                                padding: 0.75rem;
+                                border: 2px solid var(--primary-black);
+                                background: var(--primary-white);
+                                color: var(--primary-black);
+                                margin-top: 0.5rem;
+                                font-family: var(--font-mono);
+                                font-size: 1rem;
+                            "
+                        >
+                            <option value="easy" style="background: var(--primary-white); color: var(--primary-black);">Easy - Predictable AI.</option>
+                            <option value="medium" selected style="background: var(--primary-white); color: var(--primary-black);">Medium - Balanced AI.</option>
+                            <option value="hard" style="background: var(--primary-white); color: var(--primary-black);">Hard - Strategic AI.</option>
+                        </select>
+                    </div>
+
+                    
+                    <button id="start-toss" class="btn btn-primary">
+                        Start Toss
+                    </button>
+                    <button id="start-game" class="btn btn-primary" style="display: none;">
+                        Start Match
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="game-interface" style="display: none;">
+            
+            <div class="game-header">
+                <h2 class="title-lg">Match in Progress</h2>
+                <p id="game-status" class="text-mono">Preparing...</p>
+            </div>
+
+            
+            <div class="game-status">
+                <div class="score-card">
+                    <div class="score-number" id="player-score">0</div>
+                    <div class="score-label">Your Score</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-number" id="bot-score">0</div>
+                    <div class="score-label">Bot Score</div>
+                </div>
+            </div>
+
+            
+            <div class="card text-center">
+                <h3 class="font-bold">Your Opponent</h3>
+                <div id="bot-info" class="text-mono mt-4">
+                    Loading opponent...
+                </div>
+            </div>
+
+            
+            <div class="card">
+                <h3 class="font-bold text-center mb-4">Choose Your Number</h3>
+                <p class="text-center text-mono" style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 1rem;">
+                    Use keyboard: Press 1-9 for numbers, 0 for 10, Enter/Space to play.
+                </p>
+                <div class="number-grid">
+                    <button class="number-btn" data-number="1">1</button>
+                    <button class="number-btn" data-number="2">2</button>
+                    <button class="number-btn" data-number="3">3</button>
+                    <button class="number-btn" data-number="4">4</button>
+                    <button class="number-btn" data-number="5">5</button>
+                    <button class="number-btn" data-number="6">6</button>
+                    <button class="number-btn" data-number="7">7</button>
+                    <button class="number-btn" data-number="8">8</button>
+                    <button class="number-btn" data-number="9">9</button>
+                    <button class="number-btn" data-number="10">10</button>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button id="play-turn" class="btn btn-primary disabled" disabled>
+                        Play Turn
+                    </button>
+                </div>
+            </div>
+
+            
+            <div id="turn-result"></div>
+        </div>
+        
+        
+        <div style="margin-top: 2rem; padding: 1rem; text-align: center; border-top: 1px solid var(--primary-black); opacity: 0.6;">
+            <p style="font-size: 0.75rem; color: var(--primary-black); margin: 0;">© 2025 OddEvenSP. A New Way to Play Cricket.</p>
+        </div>
+    </div>
+
+    
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="game-over-title" class="title-lg mb-4">Game Over</h2>
+            <p id="game-over-message" class="text-mono mb-4"></p>
+            <div id="final-score" class="mb-4"></div>
+            <div>
+                <button id="play-again" class="btn btn-primary" onclick="game.newGame()">
+                    Play Again
+                </button>
+                <button class="btn" onclick="window.location.href='/'">
+                    Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="game-message"></div>
+
+    
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script>
+        // Additional game-specific JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // Style improvements for form elements
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--primary-black)';
+                    this.style.boxShadow = '0 0 0 3px rgba(255, 255, 255, 0.1)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // Add disabled state styling
+            const style = document.createElement('style');
+            style.textContent = `
+                .btn.disabled,
+                .btn:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    transform: none !important;
+                }
+                
+                .btn.disabled:hover,
+                .btn:disabled:hover {
+                    transform: none !important;
+                    box-shadow: none !important;
+                    color: var(--primary-black) !important;
+                }
+                
+                .btn.disabled:hover::before,
+                .btn:disabled:hover::before {
+                    left: -100% !important;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OddEvenSP - Progress</title>
+    <meta name="description" content="View your OddEvenSP progress and ranking">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="bg-particles"></div>
+    <header class="header">
+        <nav class="navbar" style="justify-content: center;">
+            <ul class="nav-links" style="display: flex; align-items: center; gap: 1rem;">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/game" class="nav-link">Play</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/stats" class="nav-link">Stats</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/progress" class="nav-link">Progress</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/achievements" class="nav-link">Achievements</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="title-lg animate-fade-in">Player Progress</h1>
+            <p class="text-mono animate-fade-in">Your journey through the ranks.</p>
+        </div>
+
+        <div class="card animate-slide-up">
+            <h2 class="font-bold mb-4 text-center">Experience Progress</h2>
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span class="text-mono">Level {{ stats.level }}</span>
+                    <span class="text-mono">{{ stats.xp }}/{{ stats.level * 100 }} XP</span>
+                </div>
+                <div style="width: 100%; height: 20px; background: var(--gray-light); border: 2px solid var(--primary-black);">
+                    <div style="height: 100%; background: var(--primary-black); width: {{ (stats.xp % 100) }}%; transition: width 0.3s ease;"></div>
+                </div>
+                <div style="text-align: center; margin-top: 0.5rem;">
+                    {% if stats.level < 10 %}
+                    <span class="text-mono" style="font-size: 0.8rem;">{{ 100 - (stats.xp % 100) }} XP to next level.</span>
+                    {% else %}
+                    <span class="text-mono" style="font-size: 0.8rem;">Maximum level reached!</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card animate-slide-up">
+            <h2 class="font-bold mb-4">Rank Progression</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 500px; margin: 0 auto;">
+                {% set rank_data = [
+                    {"name": "Rookie", "level": 1},
+                    {"name": "Warrior", "level": 2},
+                    {"name": "Titan", "level": 3},
+                    {"name": "Blaster", "level": 4},
+                    {"name": "Striker", "level": 5},
+                    {"name": "Smasher", "level": 6},
+                    {"name": "Dynamo", "level": 7},
+                    {"name": "Majestic", "level": 8},
+                    {"name": "Maverick", "level": 9},
+                    null,
+                    {"name": "Champion", "level": 10},
+                    null
+                ] %}
+                {% for rank_info in rank_data %}
+                {% if rank_info %}
+                <div class="text-center rank-item"
+                    style="{% if rank_info.name == stats.rank %}background: var(--primary-black); color: var(--primary-white); border-color: var(--primary-black); transform: scale(1.05);{% elif rank_info.level <= stats.level %}opacity: 1;{% else %}opacity: 0.3;{% endif %}">
+                    <div class="text-mono font-bold">{{ rank_info.name }}</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Level {{ rank_info.level }}</div>
+                    {% if rank_info.name == stats.rank %}
+                    <div style="font-size: 0.6rem; margin-top: 0.25rem; color: var(--primary-white);">CURRENT</div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div></div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1rem; text-align: center; border-top: 1px solid var(--primary-black); opacity: 0.6;">
+            <p style="font-size: 0.75rem; color: var(--primary-black); margin: 0;">© 2025 OddEvenSP. A New Way to Play Cricket.</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach(item => {
+                item.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+                });
+                item.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

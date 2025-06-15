@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OddEvenSP - Achievements</title>
+    <meta name="description" content="View your OddEvenSP achievements and unlocks">
+    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    
+    <div class="bg-particles"></div>
+    
+    
+    <header class="header">
+        <nav class="navbar" style="justify-content: center;">
+            <ul class="nav-links" style="display: flex; align-items: center; gap: 1rem;">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/game" class="nav-link">Play</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/stats" class="nav-link">Stats</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/progress" class="nav-link">Progress</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/achievements" class="nav-link">Achievements</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    
+    <div class="game-container">
+        
+        <div class="game-header">
+            <h1 class="title-lg animate-fade-in">Achievements</h1>
+            <p class="text-mono animate-fade-in">Unlock rewards and showcase your skills</p>
+        </div>
+
+        
+        <div class="card animate-slide-up">
+            <h2 class="font-bold mb-4 text-center">All Achievements</h2>
+            <div style="display: grid; gap: 1.5rem;">
+                
+                
+                <div class="stat-item achievement-item" style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 1.5rem;
+                    border-radius: 10px;
+                    {% if stats.wins > 0 %}
+                        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+                        border-color: var(--primary-black);
+                    {% else %}
+                        opacity: 0.6;
+                    {% endif %}
+                ">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 3rem;">🏆</div>
+                        <div>
+                            <div class="font-bold" style="font-size: 1rem;">First Victory - Win your first game!</div>
+                        </div>
+                    </div>
+                    <div class="text-mono" style="text-align: right;">
+                        {% if stats.wins > 0 %}
+                            <div style="color: green; font-weight: bold;">✓ UNLOCKED.</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Achievement earned!</div>
+                        {% else %}
+                            <div style="color: var(--gray-medium);">LOCKED</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">{{ stats.wins }}/1 games win</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                
+                <div class="stat-item achievement-item" style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 1.5rem;
+                    {% if stats.high_score >= 50 %}
+                        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+                        border-color: var(--primary-black);
+                    {% else %}
+                        opacity: 0.6;
+                    {% endif %}
+                ">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 3rem;">🎯</div>
+                        <div>
+                            <div class="font-bold" style="font-size: 1rem;">High Scorer - Score 50+ runs in a single game.</div>
+                        </div>
+                    </div>
+                    <div class="text-mono" style="text-align: right;">
+                        {% if stats.high_score >= 50 %}
+                            <div style="color: green; font-weight: bold;">✓ UNLOCKED.</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Best: {{ stats.high_score }} runs</div>
+                        {% else %}
+                            <div style="color: var(--gray-medium);">LOCKED</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">{{ stats.high_score }}/50 runs</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                
+                <div class="stat-item achievement-item" style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 1.5rem;
+                    {% if stats.games_played >= 10 %}
+                        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+                        border-color: var(--primary-black);
+                    {% else %}
+                        opacity: 0.6;
+                    {% endif %}
+                ">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 3rem;">⚡</div>
+                        <div>
+                            <div class="font-bold" style="font-size: 1rem;">Veteran Player - Play 10 complete games!</div>
+                        </div>
+                    </div>
+                    <div class="text-mono" style="text-align: right;">
+                        {% if stats.games_played >= 10 %}
+                            <div style="color: green; font-weight: bold;">✓ UNLOCKED.</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">{{ stats.games_played }} games played</div>
+                        {% else %}
+                            <div style="color: var(--gray-medium);">LOCKED</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">{{ stats.games_played }}/10 games</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                
+                <div class="stat-item achievement-item" style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 1.5rem;
+                    {% if stats.streak >= 5 %}
+                        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+                        border-color: var(--primary-black);
+                    {% else %}
+                        opacity: 0.6;
+                    {% endif %}
+                ">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 3rem;">🔥</div>
+                        <div>
+                            <div class="font-bold" style="font-size: 1rem;">On Fire - Win 5 games in a row.</div>
+                        </div>
+                    </div>
+                    <div class="text-mono" style="text-align: right;">
+                        {% if stats.streak >= 5 %}
+                            <div style="color: green; font-weight: bold;">✓ UNLOCKED.</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">{{ stats.streak }} win streak!</div>
+                        {% else %}
+                            <div style="color: var(--gray-medium);">LOCKED</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">{{ stats.streak }}/5 wins</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                
+                <div class="stat-item achievement-item" style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 1.5rem;
+                    {% if stats.level >= 10 %}
+                        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+                        border-color: var(--primary-black);
+                    {% else %}
+                        opacity: 0.6;
+                    {% endif %}
+                ">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 3rem;">👑</div>
+                        <div>
+                            <div class="font-bold" style="font-size: 1rem;">Champion - Reach the maximum level (Level 10)!</div>
+                        </div>
+                    </div>
+                    <div class="text-mono" style="text-align: right;">
+                        {% if stats.level >= 10 %}
+                            <div style="color: green; font-weight: bold;">✓ UNLOCKED.</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Maximum level!</div>
+                        {% else %}
+                            <div style="color: var(--gray-medium);">LOCKED</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Level {{ stats.level }}/10</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        
+        <div style="margin-top: 2rem; padding: 1rem; text-align: center; border-top: 1px solid var(--primary-black); opacity: 0.6;">
+            <p style="font-size: 0.75rem; color: var(--primary-black); margin: 0;">© 2025 OddEvenSP. A New Way to Play Cricket.</p>
+        </div>
+    </div>
+
+    
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoled', function() {
+            // Add some visual enhancements
+            const achievementItems = document.querySelectorAll('.achievement-item');
+            achievementItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

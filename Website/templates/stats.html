@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OddEvenSP - Stats</title>
+    <meta name="description" content="View your OddEvenSP game statistics">
+    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    
+    <div class="bg-particles"></div>
+    
+    
+    <header class="header">
+        <nav class="navbar" style="justify-content: center;">
+            <ul class="nav-links" style="display: flex; align-items: center; gap: 1rem;">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/game" class="nav-link">Play</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/stats" class="nav-link">Stats</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/progress" class="nav-link">Progress</a></li>
+                <li style="color: var(--primary-black); opacity: 0.7;">|</li>
+                <li><a href="/achievements" class="nav-link">Achievements</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    
+    <div class="game-container">
+        
+        <div class="game-header">
+            <h1 class="title-lg animate-fade-in">Game Statistics</h1>
+            <p class="text-mono animate-fade-in">Your cricket performance overview.</p>
+        </div>
+
+        
+        <div class="card animate-slide-up">
+            <h2 class="font-bold mb-4">Game Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="wins">{{ stats.wins }}</span>
+                    <span class="stat-label">Wins</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="losses">{{ stats.losses }}</span>
+                    <span class="stat-label">Losses</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="ties">{{ stats.ties }}</span>
+                    <span class="stat-label">Ties</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="games-played">{{ stats.games_played }}</span>
+                    <span class="stat-label">Games Played</span>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="card animate-slide-up">
+            <h2 class="font-bold mb-4">Performance</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="high-score">{{ stats.high_score }}</span>
+                    <span class="stat-label">High Score</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="total-score">{{ stats.total_score }}</span>
+                    <span class="stat-label">Total Runs</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">
+                        {% if stats.games_played > 0 %}
+                            {{ "%.1f"|format(stats.total_score / stats.games_played) }}
+                        {% else %}
+                            0.0
+                        {% endif %}
+                    </span>
+                    <span class="stat-label">Average Score</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">
+                        {% if stats.games_played > 0 %}
+                            {{ "%.0f"|format((stats.wins / stats.games_played) * 100) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </span>
+                    <span class="stat-label">Win Rate</span>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div style="margin-top: 2rem; padding: 1rem; text-align: center; border-top: 1px solid var(--primary-black); opacity: 0.6;">
+            <p style="font-size: 0.75rem; color: var(--primary-black); margin: 0;">© 2025 OddEvenSP. A New Way to Play Cricket.</p>
+        </div>
+    </div>
+
+    
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add some visual enhancements
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
