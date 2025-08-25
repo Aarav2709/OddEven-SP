@@ -1,4 +1,4 @@
-# 🟡 OddEvenSP
+# 🟡 OddEven-SP
 
 OddEvenSP is a fun, interactive cricket game where you challenge a computer opponent.
 
@@ -11,7 +11,7 @@ OddEvenSP is a fun, interactive cricket game where you challenge a computer oppo
 ---
 
 ## 🌐 Play Online
-Experience OddEvenSP directly in your browser with our sleek web interface:
+Experience OddEvenSP directly in your browser:
 
 **➡️ [Play OddEvenSP Online!](https://oddevensp.vercel.app)**
 
