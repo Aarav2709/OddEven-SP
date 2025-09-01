@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 import random
 import json
 import os
@@ -11,7 +11,7 @@ app.secret_key = 'oddeven-sp-secret-key-2025'
 MAX_SCORE = 10
 MIN_SCORE = 1
 RANKS = [
-    "Rookie", "Warrior", "Titan", "Blaster", "Striker", 
+    "Rookie", "Warrior", "Titan", "Blaster", "Striker",
     "Smasher", "Dynamo", "Majestic", "Maverick", "Champion"
 ]
 
@@ -45,15 +45,15 @@ class GameBot:
         self.name = random.choice(BOT_NAMES)
         self.country = random.choice(BOT_COUNTRIES)
         self.personality = random.choice(list(BOT_PERSONALITIES.keys()))
-        
+
     def get_message(self, message_type):
         return random.choice(BOT_PERSONALITIES[self.personality][message_type])
-    
+
     def get_number(self, difficulty='medium', player_history=None):
         """Smart bot number selection based on difficulty and player patterns"""
         if player_history is None:
             player_history = []
-        
+
         if difficulty == 'easy':
             # Easy: More predictable patterns, limited range
             return random.randint(1, 6)
@@ -104,6 +104,10 @@ def index():
     init_session()
     return render_template('index.html', stats=session['stats'])
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route('/game')
 def game():
     init_session()
@@ -128,9 +132,9 @@ def achievements():
 def start_game():
     init_session()
     data = request.json
-    
+
     bot = GameBot()
-    
+
     game_state = {
         'player_name': data.get('player_name', 'Player'),
         'difficulty': data.get('difficulty', 'medium'),
@@ -150,10 +154,10 @@ def start_game():
         'game_over': False,
         'winner': None
     }
-    
+
     session['current_game'] = game_state
     session.permanent = True
-    
+
     return jsonify({
         'success': True,
         'game_state': game_state,
@@ -164,27 +168,27 @@ def start_game():
 def play_turn():
     if 'current_game' not in session or not session['current_game']:
         return jsonify({'error': 'No active game'}), 400
-    
+
     data = request.json
     game = session['current_game']
     player_number = data.get('number')
-    
+
     if not player_number or player_number < 1 or player_number > 10:
         return jsonify({'error': 'Invalid number'}), 400
-    
+
     # Generate bot number with player history for smarter AI
     bot = GameBot()
     bot.personality = game['bot']['personality']
-    
+
     # Extract player numbers from history for AI analysis
     player_numbers = [turn['player_number'] for turn in game['history']]
     bot_number = bot.get_number(game['difficulty'], player_numbers)
-    
+
     # Check if numbers match (player gets out)
     numbers_match = player_number == bot_number
     total = player_number + bot_number
     is_odd = total % 2 == 1
-    
+
     turn_result = {
         'player_number': player_number,
         'bot_number': bot_number,
@@ -192,7 +196,7 @@ def play_turn():
         'is_odd': is_odd,
         'numbers_match': numbers_match
     }
-    
+
     # Update scores based on current turn
     if game['current_turn'] == 'player':
         if numbers_match:
@@ -213,9 +217,9 @@ def play_turn():
             game['bot_score'] += bot_number  # Only add batter's number (bot is batting)
             turn_result['message'] = f"Bot scored {bot_number} runs!"
             turn_result['bot_message'] = bot.get_message('taunts')
-    
+
     game['history'].append(turn_result)
-    
+
     # Check for innings change or game end
     if game['current_turn'] == 'player' and game['player_out']:
         if game['game_phase'] == 'first_innings':
@@ -231,7 +235,7 @@ def play_turn():
             game['bot_out'] = False
         else:
             game['game_over'] = True
-    
+
     # Check for game end conditions
     if game['game_phase'] == 'second_innings':
         if game['mode'] == 'bat':
@@ -244,7 +248,7 @@ def play_turn():
             if game['player_score'] > game['bot_score']:
                 game['game_over'] = True
                 game['winner'] = 'player'
-    
+
     # Determine final winner if game is over
     if game['game_over'] and not game['winner']:
         if game['player_score'] > game['bot_score']:
@@ -253,16 +257,16 @@ def play_turn():
             game['winner'] = 'bot'
         else:
             game['winner'] = 'tie'
-    
+
     # Update session stats if game is over
     if game['game_over']:
         stats = session['stats']
         stats['games_played'] += 1
         stats['total_score'] += game['player_score']
-        
+
         if game['player_score'] > stats['high_score']:
             stats['high_score'] = game['player_score']
-        
+
         if game['winner'] == 'player':
             stats['wins'] += 1
             stats['streak'] += 1
@@ -277,7 +281,7 @@ def play_turn():
             stats['ties'] += 1
             turn_result['final_message'] = "🤝 It's a Tie!"
             turn_result['bot_message'] = "Good game!"
-        
+
         # Update XP and level
         xp_gained = 50 if game['winner'] == 'player' else 20
         stats['xp'] += xp_gained
@@ -285,12 +289,12 @@ def play_turn():
         if new_level > stats['level']:
             stats['level'] = new_level
             stats['rank'] = RANKS[min(new_level - 1, len(RANKS) - 1)]
-        
+
         session['stats'] = stats
-    
+
     session['current_game'] = game
     session.permanent = True
-    
+
     return jsonify({
         'success': True,
         'turn_result': turn_result,

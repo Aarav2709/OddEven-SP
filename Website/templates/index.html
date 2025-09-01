@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OddEvenSP</title>
     <meta name="description" content="A beautiful black and white minimalist cricket game. Challenge the AI in odd-even cricket!">
-    
-    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    
+
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    
+
     <div class="bg-particles"></div>
-    
-    
+
+
     <header class="header">
         <nav class="navbar" style="justify-content: center;">
             <ul class="nav-links" style="display: flex; align-items: center; gap: 1rem;">
@@ -34,9 +35,9 @@
         </nav>
     </header>
 
-    
+
     <main>
-        
+
         <section class="section" id="hero">
             <div class="container">
                 <div class="text-center">
@@ -50,8 +51,8 @@
                         <a href="/game" class="btn btn-primary">Start Playing</a>
                         <a href="/stats" class="btn">View Stats</a>
                     </div>
-                    
-                    
+
+
                     <div data-animate style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--primary-black); opacity: 0.6;">
                         <p style="font-size: 0.75rem; color: var(--primary-black); margin: 0;">© 2025 OddEvenSP. A New Way to Play Cricket.</p>
                     </div>
@@ -60,7 +61,7 @@
         </section>
     </main>
 
-    
+
     <script src="{{ url_for('static', filename='js/game.js') }}"></script>
 </body>
 </html>
