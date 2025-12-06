@@ -270,16 +270,16 @@ def play_turn():
         if game['winner'] == 'player':
             stats['wins'] += 1
             stats['streak'] += 1
-            turn_result['final_message'] = "🎉 You Won!"
+            turn_result['final_message'] = "You Won"
             turn_result['bot_message'] = bot.get_message('lose_phrases')
         elif game['winner'] == 'bot':
             stats['losses'] += 1
             stats['streak'] = 0
-            turn_result['final_message'] = "😞 You Lost!"
+            turn_result['final_message'] = "You Lost"
             turn_result['bot_message'] = bot.get_message('win_phrases')
         else:
             stats['ties'] += 1
-            turn_result['final_message'] = "🤝 It's a Tie!"
+            turn_result['final_message'] = "It's a Tie"
             turn_result['bot_message'] = "Good game!"
 
         # Update XP and level
