@@ -17,6 +17,10 @@ Challenge AI opponents, score runs, unlock achievements, and climb ranks.
   </a>
 </p>
 
+<div align="center">
+  <img src="image/ss.png" height = "400" width="200">
+</div>
+
 ## About
 - OddEven SP is a single player cricket game that combines Odd Even mechanics with cricket gameplay.
 - Play against AI opponents, score runs, chase targets, earn XP, unlock achievements, and improve your rank.
