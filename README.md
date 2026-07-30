@@ -1,4 +1,4 @@
-<h1 align="center">OddEven SP</h1>
+<h1 align="center">OddEven-SP</h1>
 
 <p align="center">
 A terminal based cricket game built on the classic Odd Even concept.
