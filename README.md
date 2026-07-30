@@ -1,94 +1,84 @@
-<h1 align="center">OddEven-SP</h1>
+<h1 align="center">OddEven SP</h1>
 
 <p align="center">
-  OddEvenSP is a fun, interactive cricket game where you challenge a computer opponent.
+A terminal based cricket game built on the classic Odd Even concept.
+Challenge AI opponents, score runs, unlock achievements, and climb ranks.
 </p>
 
 <p align="center">
-  <a href="https://pepy.tech/projects/oddeven-sp">
-    <img src="https://static.pepy.tech/badge/oddeven-sp" alt="PyPI Downloads">
+  <a href="https://pypi.org/project/oddeven-sp/">
+    <img src="https://img.shields.io/pypi/v/oddeven-sp.svg" alt="PyPI Version">
   </a>
-  <a href="https://pypi.org/project/OddEven-SP/">
-    <img src="https://img.shields.io/pypi/v/OddEven-SP.svg" alt="PyPI Version">
-  </a>
-  <a href="https://pypi.org/project/OddEven-SP/">
-    <img src="https://img.shields.io/pypi/dm/OddEven-SP.svg" alt="Downloads">
-  </a>
-  <a href="https://pypi.org/project/OddEven-SP/">
-    <img src="https://img.shields.io/pypi/pyversions/OddEven-SP.svg" alt="Python Versions">
+  <a href="https://pypi.org/project/oddeven-sp/">
+    <img src="https://img.shields.io/pypi/dm/oddeven-sp.svg" alt="Downloads">
   </a>
   <a href="https://github.com/Aarav2709/OddEven-SP/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/Aarav2709/OddEven-SP" alt="License">
   </a>
 </p>
 
-<p align="center">
-  <img src="image.png" alt="OddEvenSP Banner" />
-</p>
+## About
 
----
+OddEven SP is a single player cricket game that combines Odd Even mechanics with cricket gameplay.
 
-## Play Online
-Experience OddEvenSP directly in your browser:  
-**[Play OddEvenSP Online!](https://oddevensp.vercel.app)**  
+Play against AI opponents, score runs, chase targets, earn XP, unlock achievements, and improve your rank.
 
----
+Runs completely in your terminal.
 
+## Installation
 
-### Web Version
-Simply visit the website or run locally and enjoy:
-- Click-to-play number selection  
-- Interactive coin toss feature  
-- Real-time statistics tracking  
-- Minimalist design  
+```bash
+pip install oddeven-sp
+```
 
----
+Start the game:
+
+```bash
+oddeven-sp
+```
+
+## Gameplay
+
+- Choose a number between 1 and 10.
+- The opponent chooses a number.
+- Matching numbers result in a wicket.
+- Different numbers score runs.
+- Beat your opponent to win the match.
 
 ## Features
 
-### Terminal Version
-- Difficulty Levels: Easy, Medium, Hard  
-- Dark & Light Terminal Modes  
-- Achievements & Stats System  
-- Smart AI Opponent  
-- Rank & XP Progression System  
-- Data Saved Between Sessions  
-- Colorful CLI Interface  
+- Cricket batting and bowling system
+- AI opponents with different styles
+- Easy, Medium, and Hard difficulties
+- XP and rank progression
+- Achievement system
+- Player statistics
+- Training mode
+- Opponent scouting
+- Multiple terminal themes
 
-### Web Version
-- Interactive Click-to-Play Interface  
-- Animated Coin Toss Feature  
-- Real-time Statistics Dashboard  
-- Achievement System with Progress Tracking  
-- Visual Rank & Level Progression  
-- Minimalist Black & White Design  
-- Persistent Game Data  
-- Fully Responsive Design  
+## Achievements
 
----
+Unlock milestones such as:
 
-## Player Stats & Achievements
+- First Victory
+- Fifty Runs
+- Century
+- Three Win Streak
+- Veteran Player
+- Hard Mode Winner
+- Flawless Match
 
-Track your performance across both versions:  
-- **Wins, Losses, Ties** – Complete match statistics  
-- **High Score & Average** – Personal best tracking  
-- **Level & XP System** – Progress through 10 ranks  
-- **Achievement Unlocks** – Special milestones:  
-  - *First Victory* – Win your first game  
-  - *High Scorer* – Score 50+ runs in one game  
-  - *Veteran Player* – Play 10 complete games  
-  - *On Fire* – Win 5 games in a row  
-  - *Champion* – Reach maximum level  
+## Requirements
 
----
+- Python 3.8+
+- colorama
 
-## How the Game Works
-- Pick a number between 1 and 10.  
-- The computer picks one too.  
-- If numbers match → You're out!  
-- Keep scoring runs, beat the bot, and climb ranks.  
+## License
 
----
+Licensed under the Apache License 2.0.
 
-## Tip
-Choose your mode wisely — terminal theme affects how colors appear.
+Created by **Aarav Gupta**
+
+GitHub:
+https://github.com/Aarav2709/OddEven-SP
