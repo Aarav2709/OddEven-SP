@@ -18,15 +18,11 @@ Challenge AI opponents, score runs, unlock achievements, and climb ranks.
 </p>
 
 ## About
-
-OddEven SP is a single player cricket game that combines Odd Even mechanics with cricket gameplay.
-
-Play against AI opponents, score runs, chase targets, earn XP, unlock achievements, and improve your rank.
-
-Runs completely in your terminal.
+- OddEven SP is a single player cricket game that combines Odd Even mechanics with cricket gameplay.
+- Play against AI opponents, score runs, chase targets, earn XP, unlock achievements, and improve your rank.
+- Runs completely in your terminal.
 
 ## Installation
-
 ```bash
 pip install oddeven-sp
 ```
@@ -38,7 +34,6 @@ oddeven-sp
 ```
 
 ## Gameplay
-
 - Choose a number between 1 and 10.
 - The opponent chooses a number.
 - Matching numbers result in a wicket.
@@ -46,7 +41,6 @@ oddeven-sp
 - Beat your opponent to win the match.
 
 ## Features
-
 - Cricket batting and bowling system
 - AI opponents with different styles
 - Easy, Medium, and Hard difficulties
@@ -58,7 +52,6 @@ oddeven-sp
 - Multiple terminal themes
 
 ## Achievements
-
 Unlock milestones such as:
 
 - First Victory
@@ -70,15 +63,10 @@ Unlock milestones such as:
 - Flawless Match
 
 ## Requirements
-
 - Python 3.8+
 - colorama
 
 ## License
-
 Licensed under the Apache License 2.0.
 
-Created by **Aarav Gupta**
-
-GitHub:
-https://github.com/Aarav2709/OddEven-SP
+> Game has reached EoL, meaning no more updates to be provided. This was my first ever open-sourced project on github, and I adore it to this day. Thank you to all those who downloaded and tried it out even if it was just once. Love you all.
